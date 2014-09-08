@@ -78,7 +78,7 @@ for i, dt in enumerate(dt_values):
     z[0] = z0
     
     # time loop using euler's method
-    for i in range(1,N):
+    for n in range(1,N):
         u = u + dt*np.array([u[1],g*(1-u[0]/zt)])
         z[n] = u[0]     # storing the elevation for the next step
         
@@ -113,5 +113,3 @@ plt.ylabel('Error',fontsize=16)
 plt.loglog(dt_values, error_values,'ko-')
 plt.axis('equal')
 plt.show()
-
-    
