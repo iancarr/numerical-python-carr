@@ -112,4 +112,5 @@ plt.xlabel('$\Delta t$', fontsize=16)
 plt.ylabel('Error',fontsize=16)
 plt.loglog(dt_values, error_values,'ko-')
 plt.axis('equal')
-plt.show()
+plt.show
+print 'hellos'
