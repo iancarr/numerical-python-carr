@@ -10,8 +10,8 @@ flight.
 from math import sin, cos, log, ceil
 import numpy as np
 import matplotlib.pyplot as plt 
-import scipy.optimize as optimize
 from matplotlib import rcParams
+import itertools
 rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 16
 
@@ -22,15 +22,21 @@ C_D = 1/5. # drag coeff
 C_L = 1.0  	# lift coeff = 1 for conveinence
 
 # ------- set initial conditions -------
-v0 = 12	# start at trim velocity
-theta0 = 0.0 	# inital angle of trajectory
+v0 = 4.7
+theta0 = 0
 x0 = 0.0 		# horisontal position (arbitrary)
 y0 = 2.0		# initial altitude - about 6 ft
 				# assuming someone throwing form head height
 
-def get_flight_path(v0, theta0, x0, y0):
-	# --------- system of equations --------
+# ------- test all possiblities for angle and speed -------
+v01 = np.linspace(0.1,9.8)	# start at trim velocity
+theta01 = np.linspace((-np.pi/2), (n/2)) 	# inital angle of trajectory
+initial_cond = list(itertools.product(v01,theta01))
 
+#for i in range(len(v0)):
+#	get_flight_path(v0[i], theta0[i], x0, y0)
+
+def get_flight_path(v0, theta0, x0, y0):
 	# define function for sys of eqn
 	def f(u):
 		"""returns the right-hand side of the phugoid sys of eqn
@@ -99,12 +105,14 @@ def get_flight_path(v0, theta0, x0, y0):
 
 	impact = x_pa[-1]
 
-	print "Point of impact: ", impact
 	return impact
 
-# using the defined function
+# ------- looping over all possiblities -------
+impact_range = np.empty_like(initial_cond)
 
-get_flight_path(v0,theta0,x0,y0)
+for i in range(len(initial_cond)):
+	impact_range = get_flight_path(initial_cond[i][0],initial_cond[i][1],x0,y0)
+
 
 # -------- plot the trajectory ------
 """
