@@ -22,32 +22,19 @@ C_D = 1/5. # drag coeff
 C_L = 1.0  	# lift coeff = 1 for conveinence
 
 # ------- set initial conditions -------
-v0 = 4.7
-theta0 = 0
+#v0 = 4.7
+#theta0 = 0
 x0 = 0.0 		# horisontal position (arbitrary)
 y0 = 2.0		# initial altitude - about 6 ft
 				# assuming someone throwing form head height
 
 # ------- test all possiblities for angle and speed -------
-v01 = np.linspace(0.1,9.8)	# start at trim velocity
-theta01 = np.linspace((-np.pi/2), (n/2)) 	# inital angle of trajectory
-initial_cond = list(itertools.product(v01,theta01))
-
-#for i in range(len(v0)):
-#	get_flight_path(v0[i], theta0[i], x0, y0)
+v01 = np.linspace(1,9.8,num=10)	# start at trim velocity
+theta01 = np.linspace((-np.pi/2),(np.pi/3),num=10) 	# inital angle of trajectory
 
 def get_flight_path(v0, theta0, x0, y0):
 	# define function for sys of eqn
 	def f(u):
-		"""returns the right-hand side of the phugoid sys of eqn
-
-		Parameters - u: array of floats
-						array containing the solution at n
-
-		Returns - dudt: array of float
-						array containing the RHS for u
-		"""
-
 		v = u[0]
 		theta = u[1]
 		x = u[2]
@@ -58,28 +45,14 @@ def get_flight_path(v0, theta0, x0, y0):
 						v*cos(theta),\
 						v*sin(theta)])
 
-
 	# solve system using eulers method
 
 	def euler_step(u,f,dt):
-		"""returns the solution at the next time-step
-
-		Parameters - u: array of float
-						solution to the prev time-step
-					f: function
-						funciton to compute the RHS of the sys
-					dt: float
-						time-step
-
-		Returns: u_n_plus_1 : array of float
-							approx soln at the next time-step
-	    """
-
 		return u + dt*f(u) 
 	    
 	# ------- solve the system to get trajectory -------
 	 
-	T = 100.0			# final time
+	T = 10.0			# final time
 	dt = 0.01 			# time-step
 	N = int(T/dt) + 1 	# number of time-steps
 	t = np.linspace(0.0,T,N) # discretized time
@@ -107,12 +80,21 @@ def get_flight_path(v0, theta0, x0, y0):
 
 	return impact
 
-# ------- looping over all possiblities -------
-impact_range = np.empty_like(initial_cond)
+# ------- looping over all possiblities ------- 
+impact_range = np.zeros((len(v01),len(theta01)))
 
-for i in range(len(initial_cond)):
-	impact_range = get_flight_path(initial_cond[i][0],initial_cond[i][1],x0,y0)
+for i in range(len(v01)):
+	for j in range(len(theta01)):
+		impact_range[i,j] = get_flight_path(v01[i],theta01[j],x0,y0)
 
+
+impact_max = np.amax(impact_range)
+impact_index = np.argmax(impact_range)
+
+print impact_max
+print "Largest index: ", impact_index
+print "Velocity: ",v01[9]
+print "Angle: ",theta01[4]*np.pi/180
 
 # -------- plot the trajectory ------
 """
