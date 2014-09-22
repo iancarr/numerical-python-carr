@@ -79,7 +79,6 @@ def get_flight_path(v0, theta0, x0, y0):
 	impact = x_pa[-1]
 
 	return impact
-
 # ------- looping over all possiblities ------- 
 impact_range = np.zeros((len(v01),len(theta01)))
 
