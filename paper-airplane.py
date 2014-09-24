@@ -30,7 +30,7 @@ y0 = 2.0		# initial altitude - about 6 ft
 
 # ------- test all possiblities for angle and speed -------
 v01 = np.linspace(1,9.8,num=10)	# start at trim velocity
-theta01 = np.linspace((-np.pi/2),(np.pi/3),num=10) 	# inital angle of trajectory
+theta01 = np.linspace((-np.pi/2),(np.pi/3),num=10) 	# inital angle of traj
 
 def get_flight_path(v0, theta0, x0, y0):
 	# define function for sys of eqn
@@ -78,7 +78,7 @@ def get_flight_path(v0, theta0, x0, y0):
 
 	impact = x_pa[-1]
 
-	return impact
+	return impact, x_pa, y_pa
 # ------- looping over all possiblities ------- 
 impact_range = np.zeros((len(v01),len(theta01)))
 
@@ -96,7 +96,7 @@ print "Velocity: ",v01[9]
 print "Angle: ",theta01[4]*np.pi/180
 
 # -------- plot the trajectory ------
-"""
+
 # plot the position information
 plt.figure(figsize=(8,6))
 plt.grid(True)
@@ -104,4 +104,3 @@ plt.xlabel(r'x',fontsize=18)
 plt.ylabel(r'y',fontsize=18)
 plt.title('Glider trajectory',fontsize=18)
 plt.plot(x_pa,y_pa,'k-',lw=2)
-"""
