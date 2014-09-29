@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Module 2 Lesson 2: CFL Condition
 # Ian Carr Sep 29 2014
 
@@ -85,3 +86,4 @@ def linearconv(nx):
 linearconv(41)
 linearconv(75)
 linearconv(1000)
+
