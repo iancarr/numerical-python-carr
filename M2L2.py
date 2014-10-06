@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Module 2 Lesson 2: CFL Condition
 # Ian Carr Sep 29 2014
 
@@ -61,8 +61,8 @@ def linearconv(nx):
 	# IC
 	dx = 2./(nx-1)
 	nt = 20
-	c = 1
-	sigma = .5 # CFL condition
+	c = 1.
+	sigma = 1. # CFL condition
 
 	dt = sigma*dx
 
@@ -78,12 +78,11 @@ def linearconv(nx):
 		u[0] = 1.0
 
 	plt.figure()
-	plt.plot(np.linspace(0,2,nx), u)
+	plt.plot(np.linspace(0,3,nx), u)
 	plt.ylim(0,2.5)
 	plt.show()
 
 # testing modified linear convection fn
-linearconv(41)
 linearconv(75)
 linearconv(1000)
 
