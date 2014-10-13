@@ -22,6 +22,7 @@ from sympy.utilities.lambdify import lambdify
 u = -2*nu*(phiprime/phi)+4
 
 ufunc = lambdify((t,x,nu),u)
+
 # print("The value of u at t=1, x=4, nu=3 is {}".format(ufunc(1,4,3)))
 
 # ------- solving burgers eqn ----------
