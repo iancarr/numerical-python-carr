@@ -60,6 +60,7 @@ for n in range(nt):
 
 u_analytical = np.asarray([ufunc(nt*dt,xi,nu) for xi in x])
 
+
 plt.figure(figsize=(8,5), dpi=100)
 plt.plot(x,u, color='k', ls='--', lw=3, label='Computational')
 plt.plot(x,u_analytical,label='Analytical')
@@ -94,7 +95,6 @@ def burgers(n):
 	line.set_data(x,u)
 	line2.set_data(x,u_analytical)
 
-
 animation.FuncAnimation(fig,burgers,frames=nt,interval=100)
 
 
@@ -112,5 +112,16 @@ for n in range(nt):
 		u[-1] = un[-1] - un[-1]*dt/dx*(un[-1]-un[-2]) + nu*dt/dx**2*\
 				(un[0] - 2*un[-1] + un[-2])
 
+timeit
+u = np.asarray([ufunc(t,x0,nu) for x0 in x])
 
+for n in range(nt):
+	un = u.copy()
+
+	u[1:-1] = un[1:-1] - un[1:-1] * dt/dx * (un[1:-1] - un[:-2]) +\
+			nu*dt/dx**2 * (un[2:] - 2*un[1:-1] + un[:-2])
+	u[0] = un[0] - un[0] * dt/dx * (un[0]-un[-1]) + nu*dt/dx**2*\
+			(un[1] - 2*un[0] + un[-1])
+	u[-1] = un[-1] - un[-1] * dt/dx * (un[-1] - un[-2]) + nu*dt/dx**2*\
+			(un[0]-2*)
 

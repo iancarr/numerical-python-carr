@@ -60,7 +60,6 @@ plt.ylim(0,2.5)
 # final time
 t_f = 0.0
 
-
 while t_f<=0.5:
 	dt = sigma*dx/(max(u))
 	t_f = t_f+dt

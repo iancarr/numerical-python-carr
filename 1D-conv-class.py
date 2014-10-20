@@ -15,7 +15,6 @@ c = 1. # assumed wave speed
 # defining square waves with np.ones
 u = np.ones(nx)
 u[.5/dx : 1/dx+1]=2 # setting the inial potiion of wave as per IC
-print u
 
 # plot the initial square wave
 plt.figure()
