@@ -27,7 +27,7 @@ dx = 4.0/nx
 x = np.linspace(0,4,nx)
 
 rho_max = 10.
-V_max = 1.
+u_max = 1.
 rho_light = 10.
 
 # using desity fn
@@ -38,19 +38,19 @@ plt.xlabel('traffic density')
 plt.ylabel('distance')
 plt.ylim(-0.5,11.)
 
-def computeF(V_max, rho_max, rho):
+def computeF(u_max, rho_max, rho):
 	"""
 	Computes traffic flux F=V*rho
 
-	Parameters: V_max - float - max velocity
+	Parameters: u_max - float - max velocity
 				rho - array of float - density
 				rho_max - float - max desnity
 
 	Returns: F - array - flux at every point x
 	"""
-	return V_max*rho*(1-rho/rho_max)
+	return u_max*rho*(1-rho/rho_max)
 
-def ftbs(rho,nt,dt,dx,rho_max,V_max):
+def ftbs(rho,nt,dt,dx,rho_max,u_max):
 	"""
 	Computes the soln with forward in time, backward in space
 
@@ -59,7 +59,7 @@ def ftbs(rho,nt,dt,dx,rho_max,V_max):
 				dt - float - time step size
 				dx - float - mesh spacing
 				rho_max - float - max density
-				V_max - float - speed limit
+				U - float - speed limit
 	Returns: rho_n - array of float - density after timestep n 
 	"""
 	# initialize our results array with dimenstions nt by nx
@@ -68,8 +68,8 @@ def ftbs(rho,nt,dt,dx,rho_max,V_max):
 	rho_n[0,:] = rho.copy()
 
 	for t in range(1,nt):
-		F = computeF(V_max, rho_max, rho)
-		rho_n[t,1:] = rho[1:]-dt/dx*(F[1:]-F[:-1])
+		F = computeF(u_max, rho_max, rho)
+		rho_n[t,1:] = rho[1:] - dt/dx*(F[1:]-F[:-1])
 		rho_n[t,0] = rho[0]
 		rho_n[t,-1] = rho[-1]
 		rho = rho_n[t].copy()
@@ -78,10 +78,17 @@ def ftbs(rho,nt,dt,dx,rho_max,V_max):
 
 # stability condition
 sigma = 1.
-dt = sigma*dx
 
-rho_n = ftbs(rho,nt,dt,dx,rho_max,V_max)
-"""
+# ------- unstable scheme --------
+dt = sigma*dx
+rho_n = ftbs(rho,nt,dt,dx,rho_max,u_max)
+
+# -------- up-wind (stable) scheme -------
+rho_light = 5.
+nt = 40
+rho = rho_green_light(nx,rho_max,rho_light)
+rho_n = ftbs(rho,nt,dt,dx,rho_max,u_max)
+
 from matplotlib import animation
 
 fig = plt.figure()
@@ -94,11 +101,5 @@ def animate(data):
 	y = data
 	line.set_data(x,y)
 	return line,
-"""
 
-# -------- Upwind schemes ---------
-
-rho_light = 5.
-nt = 40
-rho_green_light(nx,rho_max,rho_light)
-rho_n = ftbs(rho,nt,dt,dx,rho_max,V_max)
+plt.show()
