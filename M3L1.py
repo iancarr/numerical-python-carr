@@ -38,6 +38,7 @@ plt.xlabel('traffic density')
 plt.ylabel('distance')
 plt.ylim(-0.5,11.)
 
+
 def computeF(u_max, rho_max, rho):
 	"""
 	Computes traffic flux F=V*rho
