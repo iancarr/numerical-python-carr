@@ -49,7 +49,7 @@ sigma = .5
 dt = sigma*dx
 
 # damping coeff
-epsilon = 1
+epsilon = .5
 
 def animate(data):
 	x = np.linspace(0,4,nx)
