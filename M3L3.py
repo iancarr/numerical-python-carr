@@ -29,16 +29,20 @@ quadAs = quadA.simplify()
 A_sol = sympy.solve(quadAs,A)
 
 # evaluaing soln for A using the values of rho and u from lesson 1
-aval = A_sol[0].evalf(subs={u_star:0.7, u_max:1.0, rho_max:10.0})
+aval = A_sol[0].evalf(subs={u_star:1.5, u_max:2.0, rho_max:15.0})
+
+print "A = ", aval
 
 # doing the same as above for B
-bval = B_sol.evalf(subs={rho_max:10.0, A:aval})
+bval = B_sol.evalf(subs={rho_max:15.0, A:aval})
+
+print "B = ", bval
 
 # -------- Green light: take 2 --------
 
 # redefining sympy variables as floats to work with numpy
-rho_max = 10.
-u_max = 1.
+rho_max = 15.
+u_max = 2.
 
 def computeF(u_max,rho,aval,bval):
 	return u_max*rho*(1-aval*rho-bval*rho**2)

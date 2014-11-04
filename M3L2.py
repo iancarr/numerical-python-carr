@@ -33,6 +33,8 @@ x = np.linspace(0,4,nx)
 
 rho = rho_red_light(nx,rho_max,rho_in)
 
+print rho
+
 plt.plot(x,rho)
 plt.ylabel('traffic density')
 plt.xlabel('distance')

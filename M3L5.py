@@ -3,50 +3,82 @@
 
 import numpy as np 
 import matplotlib.pyplot as plt
+from matplotlib import animation
 
-# defining initial conditions
-def initial(nt,nx,dx):
-	"""
-	makes initial condition arrays
-	order of initial condition arrays - rho, u, p
-	in kg/m3, m/s, kN/m2 respectively
-	"""
+# defining function for initial conditions
+def u_initial(nx,gamma,rho_l,rho_r,u_l,u_r,p_l,p_r):
 
-	rho_initial = np.zeros(nx)
-	rho_initial[:nx/2] = 1 # initial density left
-	rho_initial[nx/2:] = 0.125 # initial density right
+	u = np.empty((3,nx))
+	u[0,nx/2:] = rho_r
+	u[0,:nx/2] = rho_l
+	u[1,nx/2:] = rho_l*u_l
+	u[1,:nx/2] = rho_r*u_r
+	u[2,nx/2:] = rho_l*(p_l/((gamma-1)*rho_l))
+	u[2,:nx/2] = rho_r*(p_r/((gamma-1)*rho_r))
 
-	u_initial = np.zeros(nx)
+	return u
 
-	p_initial = np.zeros(nx)
-	p_initial[:nx/2] = 100 # initial pressure left
-	p_initial[nx/2:] = 10 # initial pressure right
+# defining initial condition values
+rho_r = 0.125 # kg/m3
+rho_l = 1 # kg/m3
+u_l = 0 # m/s
+u_r = 0 # m/s
+p_l = 100 # kN/m2
+p_r = 10 # kN/m2
 
-	return [rho_initial, u_initial, p_initial]
+# mesh info
+nx = 101
+dt = 0.0001
+T = 0.01
+nt = int(T/dt) 
+dx = 20./nx-1
 
-nx = 81
-nt = 70
-dx = 20.0/nx-1
+# gamma value to model air
+gamma = 1.4
 
-x = np.linspace(-10.,10,nx)
+u = u_initial(nx,gamma,rho_l,rho_r,u_l,u_r,p_l,p_r)
 
-initial = initial(nt,nx,dx)
-
-plt.plot(x,initial[2])
-plt.show()
-
-def computeF(u1, u2, u3, gamma):
+def computeF(u, gamma):
 	""" computes flux vector """
-	return [u2, u2**2/u1+(gamma-1)*(u3-.5*(u2**2/u1)),\
-			(u3+(gamma-1)*(u3-0.5*(u2**2/u1))*(u2/u1))]
+	u1 = u[0,:]
+	u2 = u[1,:]
+	u3 = u[2,:]
+	return np.array([u2, u2**2/u1+(gamma-1)*(u3-.5*(u2**2/u1)),\
+			(u3+(gamma-1)*(u3-0.5*(u2**2/u1))*(u2/u1))])
+
+
+def richtmyer(u,nt,dt,dx,gamma):
+	""" computes soln with richtmyer scheme """
+	un = u.copy()
+	uhalf = np.empty_like(u)
+	fhalf = np.empty_like(u)
+	for i in range(1,nt):
+		f = computeF(u,gamma)
+		uhalf[:,1:] = 0.5*(u[:,1:]+u[:,:-1])-\
+						dt/(2*dx)*(f[:,1:]-f[:,:-1])
+		fhalf = computeF(uhalf,gamma)
+		un[:,1:] = u[:,1:] - (dt/dx) * (fhalf[:,1:] - fhalf[:,:-1])
+		u = un.copy()
+
+	return un
+
+
+# CFL
+#sigma = 1
+#dt = dx*sigma
+
+u = richtmyer(u,nt,dt,dx,gamma)
+
+x = np.linspace(-10,10,nx)
+
+print u[0,:]
+
+plt.plot(x,u[0,:])
+plt.show()
 
 def animate(data):
 	x = np.linspace(-10.,10.,nx)
 	y = data
 	line.set_data(x,y)
 	return line,
-
-def richtmyer(u,nt,dt,dx,gamma):
-	""" computes soln with richtmyer scheme """
-	f = computeF(u)
 
