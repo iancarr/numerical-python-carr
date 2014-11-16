@@ -1,4 +1,5 @@
 # Module 2 Lesson 4 - Burgers' Equation
+<<<<<<< Updated upstream
 # Ian Carr Oct 6 2014
 
 import numpy as np
@@ -11,11 +12,24 @@ import timeit
 x, nu, t = sp.symbols('x nu t')
 
 # what is phi?
+=======
+# Ian Carr - Oct 5 2014
+
+import numpy as np 
+import sympy as sp 
+import matplotlib.pyplot as plt
+
+# setting up symbolic variables
+x, nu, t = sp.symbols('x nu t')
+
+# periodic boundary condition phi
+>>>>>>> Stashed changes
 phi = sp.exp(-(x-4*t)**2/(4*nu*(t+1))) + \
 sp.exp(-(x-4*t-2*np.pi)**2/(4*nu*(t+1)))
 
 phiprime = phi.diff(x)
 
+<<<<<<< Updated upstream
 # importing magic python fn
 from sympy.utilities.lambdify import lambdify
 
@@ -36,10 +50,36 @@ dt = dx*nu
 x = np.linspace(0,2*np.pi,nx)
 un = np.empty(nx)
 t=0
+=======
+# now importing magic python fns
+from sympy.utilities.lambdify import lambdify
+
+# equation for u as given by notebook
+u = -2*nu*(phiprime/phi)+4
+
+# using magic python fn "lambdify"
+ufunc = lambdify((t,x,nu),u)
+print ("The value of u at t=1, x=4, nu=3 is {}"\
+		.format(ufunc(1,4,3)))
+
+# ------- Solving burgers' equation --------
+
+# setting variables
+nx = 101
+nt = 100
+dx = 2*np.pi/(nx-1)
+nu = 0.7
+dt = dx*nu
+
+x = np.linspace(0,2*np.pi, nx)
+un = np.empty(nx)
+t = 0
+>>>>>>> Stashed changes
 
 u = np.asarray([ufunc(t,x0,nu) for x0 in x])
 
 plt.figure(figsize=(8,5),dpi=100)
+<<<<<<< Updated upstream
 plt.plot(x,u)
 plt.xlim([0,2*np.pi])
 plt.ylim([0,10])
@@ -124,4 +164,11 @@ for n in range(nt):
 			(un[1] - 2*un[0] + un[-1])
 	u[-1] = un[-1] - un[-1] * dt/dx * (un[-1] - un[-2]) + nu*dt/dx**2*\
 			(un[0]-2*)
+=======
+plt.plot(x,u,ls='--')
+plt.xlim([0,2*np.pi])
+plt.ylim([0,10])
+plt.show()
+
+>>>>>>> Stashed changes
 
