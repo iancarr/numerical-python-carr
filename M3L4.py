@@ -108,63 +108,67 @@ def minmod(e,dx):
 	return sigma
 
 def muscl(rho,nt,dt,dx,rho_max,V_max):
-	"""
-	Computes the soln with MUSCL scheme using the\
-	Lax-Friedrichs flux and RK2 method with limited slope
-	"""
-	# iniitalize results array
-	rho_n = np.zeros((nt,len(rho)))
-	# copy the initial array into each row of array
-	rho_n[:,:] = rho.copy()
+    """
+    Computes the soln with MUSCL scheme using the\
+    Lax-Friedrichs flux and RK2 method with limited slope
+    """
+    
+    # initialize our results array
+    rho_n = np.zeros((nt,len(rho)))
+    # copy initial array into new array
+    rho_n[:,:] = rho.copy()              
+    
+    # temporary arrays
+    rho_plus = np.zeros_like(rho)
+    rho_minus = np.zeros_like(rho)
+    flux = np.zeros_like(rho)
+    rho_star = np.zeros_like(rho)
 
-	# temporary arrays
-	rho_plus = np.zeros_like(rho)
-	rho_minus = np.zeros_like(rho)
-	flux = np.zeros_like(rho)
-	rho_star = np.zeros_like(rho)
+    for t in range(1,nt):
+               
+        sigma = minmod(rho,dx) 
 
-	for t in range(1,nt):
-
-		sigma = minmod(rho,dx) # minmod slope
-
-		# values at cell boundaries
-		rho_left = rho + sigma*dx/2.
-		rho_right = rho - sigma*dx/2.
-
-		flux_left = computeF(V_max,rho_max,rho_left)
-		flux_right = computeF(V_max,rho_max,rho_right)
-
-		# flux i = i + 1/2
-		flux[:-1] = 0.5 * (flux_right[1:] + flux_left[:-1] -\
-			dx/dt * (rho_right[1:] - rho_left[:-1]))
-
-		# RK2 step 1
-		rho_star[1:-1] = rho[1:-1] + dt/dx * (flux[:-2] - \
-			flux[1:-1])
-
-		rho_star[0] = rho[0]
-		rho_star[-1] = rho[-1]
-
-		sigma = minmod(rho_star,dx)
-
-		# reconstruct values at cell boundary
-		rho_left = rho_star + sigma *dt/2.
-		rho_right = rho_star - sigma*dt/2.
-
-		flux_left = computeF(V_max, rho_max, rho_left)
-		flux_right = computeF(V_max, rho_max, rho_right)
-
-		flux[:-1] = 0.5 * (flux_right[1:] + flux_left[:-1] -\
-				dx/dt*(rho_right[1:] - rho_left[:-1]))
-
-		rho_n[t,1:-1] = 0.5 * (rho[1:-1] + rho_star[1:-1] + \
-			dx/dt * (flux[:-2] - flux[1:-1]))
-
-		rho_n[t,0] = rho[0]
-		rho_n[t,-1] = rho[-1]
-		rho = rho_n[t].copy()
-
-		return rho_n
+        # reconstruct values at cell boundaries
+        rho_left = rho + sigma*dx/2.
+        rho_right = rho - sigma*dx/2.     
+        
+        flux_left = computeF(V_max, rho_max, rho_left) 
+        flux_right = computeF(V_max, rho_max, rho_right)
+        
+        # flux i = i + 1/2
+        flux[:-1] = 0.5 * (flux_right[1:] + flux_left[:-1]\
+        				 - dx/dt * (rho_right[1:]\
+        				  - rho_left[:-1]))
+        
+        # rk2 step 1
+        rho_star[1:-1] = rho[1:-1] + dt/dx *\
+         (flux[:-2] - flux[1:-1])
+        
+        rho_star[0] = rho[0]
+        rho_star[-1] = rho[-1]
+         
+        
+        sigma = minmod(rho_star,dx) 
+    
+        # econstruct values at cell boundaries
+        rho_left = rho_star + sigma*dx/2.
+        rho_right = rho_star - sigma*dx/2.
+        
+        flux_left = computeF(V_max, rho_max, rho_left) 
+        flux_right = computeF(V_max, rho_max, rho_right)
+        
+        flux[:-1] = 0.5 * (flux_right[1:] + flux_left[:-1]\
+        					 - dx/dt *(rho_right[1:] -\
+        					  rho_left[:-1] ))
+        
+        rho_n[t,1:-1] = .5 * (rho[1:-1] + \
+        	rho_star[1:-1] + dt/dx * (flux[:-2] - flux[1:-1]))
+        
+        rho_n[t,0] = rho[0]
+        rho_n[t,-1] = rho[-1]
+        rho = rho_n[t].copy()
+        
+    return rho_n
 
 sigma = 1.
 dt = sigma*dx/V_max
