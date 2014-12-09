@@ -4,44 +4,41 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 
-def blasius(eta_max, steps, fppwall):
-	"""
-	Parameters:
-	eta_max - float - max eta for calculation
-	steps - int - num steps between 0 and eta_max
-	fppwall - float - initial value of 2nd derivative
+# building initial parameters
+nfinal = 5.	# final value of n
+dn = 0.01 	# step size
+N = int(nfinal/dn)
+n = np.linspace(0.0,nfinal,N)
 
-	Returns:
-	eta - the similarity coordinate normal to the wall
-	f, fp, fpp, fppp - blasius function and first 3 derivatives
-	"""
+f = np.zeros(N)
+f1 = np.zeros(N)
+f2 = np.zeros(N)
 
-	deta = eta_max/(steps-1)
+# initial conditions
+f[0] = 0. 
+f1[0] = 0.
 
-	eta = np.zeros(steps)
-	f = np.zeros_like(eta)
-	fp = np.zeros_like(eta)
-	fpp = np.zeros_like(eta)
-	fppp = np.zeros_like(eta)
+# our shot for the value of f at infty
+f2shot = np.linspace(0.3,1.0,1000)
 
-	# initial guess for fpp
-	fpp(0) = fppwall
+for i in range(len(f2shot)):
+	f2[0] = f2shot[i]
+	# iterating using euler's method
+	for i in range(0,N-1):
+		f[i+1] = f[i] + f1[i]*dn
+		f1[i+1] = f1[i] + f2[i]*dn
+		f2[i+1] = f2[i] - 0.5*f[i]*f2[i]*dn
+		if f1[-1] > 1:
+			break
 
-	for i in range(steps-1):
-		eta[i+1] = eta[i] + deta
-		
-		# predictor
-		fbar = f[i] + deta
-		fpbar = fp[i] + deta*fp[i]
-		fppbar = fpp[i] + deta*fpp[i]
-		fpppbar = -fbar*fppbar/2
+print f1[-1]
+print f2[-1]
 
-		# corrector
-		f[i+1] = f[i] + deta*(fp[i] + fpbar)/2
-		fp[i+1] = f[i] + deta*(fpp[i]+fppbar)/2
-		fpp[i+1] = fpp[i] + deta*(fppp[i] + fpppbar)/2
-		fppp[i+1] = -f[i+1]*fpp[i+1]/2
-
-	return eta, f, fp, fpp, fppp
-
-
+# plotting
+plt.figure()
+plt.plot(f,n)
+plt.xlim(0,1.2)
+plt.ylim(0,12)
+plt.ylabel('$\eta$',fontsize=18)
+plt.xlabel('$u/u_\infty$',fontsize=18)
+plt.show()
