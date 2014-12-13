@@ -64,8 +64,6 @@ f5[0]=1
 # setting up a break criterion for our loop
 error_bound = 0.0001
 
-
-
 for i in range(0,N-1):
 	f2[0] = f2guess[i]
 	for j in range(0,N-1):
